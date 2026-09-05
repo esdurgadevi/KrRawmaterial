@@ -1,0 +1,117 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+/* ==========================================================================
+   TRANSACTION QC DATA-ENTRY FORM TYPOGRAPHY RULES
+   Scoped ONLY to .txn-qc-form containers inside Transaction QC pages
+   ========================================================================== */
+
+/* 1. Form Section / Box / Card Titles: BOLD (700), 18px */
+.txn-qc-form h1,
+.txn-qc-form h2,
+.txn-qc-form h3,
+.txn-qc-form h4,
+.txn-qc-form .box-title,
+.txn-qc-form .card-title,
+.txn-qc-form .section-title,
+.txn-qc-form .form-section-header {
+  color: #111827 !important;
+  font-weight: 700 !important;
+  font-size: 18px !important;
+  line-height: 1.4 !important;
+}
+
+/* 2. Field Labels (e.g. A, B, C, D, CP, BRW, BDW, Entry No, Date, Machine, Count, etc.): BOLD (700), +1px Size (14px), Dark (#111827) */
+.txn-qc-form label,
+.txn-qc-form .form-label,
+.txn-qc-form .text-xs {
+  color: #111827 !important;
+  font-weight: 700 !important; /* Field Labels are BOLD */
+  font-size: 14px !important; /* Increased size by +1px for clear legibility */
+  line-height: 1.35 !important;
+  white-space: normal !important;
+  word-break: break-word !important;
+  display: block !important;
+  margin-bottom: 0.375rem !important;
+}
+
+/* 3. Text / Number Inputs, Selects, Date/Time Pickers, Textareas: Normal Weight (400), 15px */
+.txn-qc-form input[type="text"],
+.txn-qc-form input[type="number"],
+.txn-qc-form input[type="date"],
+.txn-qc-form input[type="datetime-local"],
+.txn-qc-form input[type="time"],
+.txn-qc-form select,
+.txn-qc-form textarea,
+.txn-qc-form .form-input,
+.txn-qc-form .form-select {
+  color: #111827 !important;
+  font-weight: 400 !important; /* User inputs are NOT BOLD */
+  font-size: 15px !important;
+  min-height: 42px !important;
+  padding-top: 6px !important;
+  padding-bottom: 6px !important;
+  padding-left: 12px !important;
+  padding-right: 12px !important;
+  line-height: 1.4 !important;
+  -webkit-text-fill-color: #111827 !important;
+  box-sizing: border-box !important;
+}
+
+/* 4. Dropdown Select Option items */
+.txn-qc-form select option {
+  color: #111827 !important;
+  font-weight: 400 !important; /* Dropdown options are NOT BOLD */
+  font-size: 15px !important;
+  background-color: #ffffff !important;
+}
+
+/* 5. Placeholder text: Grey color (#6b7280), NOT BOLD (400), 15px */
+input::placeholder,
+textarea::placeholder,
+select::placeholder {
+  color: #6b7280 !important;
+  font-weight: 400 !important; /* Placeholders are NOT BOLD */
+  opacity: 1 !important;
+  -webkit-text-fill-color: #6b7280 !important;
+}
+
+.txn-qc-form input::placeholder,
+.txn-qc-form textarea::placeholder,
+.txn-qc-form select::placeholder {
+  color: #6b7280 !important;
+  font-weight: 400 !important; /* Placeholders are NOT BOLD */
+  font-size: 15px !important;
+  opacity: 1 !important;
+  -webkit-text-fill-color: #6b7280 !important;
+}
+
+/* 6. Read-only / Auto-calculated / Disabled fields: Normal Weight (500), 15px */
+.txn-qc-form input:disabled,
+.txn-qc-form input[readonly],
+.txn-qc-form select:disabled,
+.txn-qc-form textarea:disabled,
+.txn-qc-form .read-only-field {
+  color: #111827 !important;
+  font-weight: 500 !important;
+  font-size: 15px !important;
+  -webkit-text-fill-color: #111827 !important;
+  opacity: 1 !important;
+}
+
+/* 7. Class sizing utilities for form elements */
+.txn-qc-form .text-sm {
+  font-size: 15px !important;
+  font-weight: 400 !important;
+}
+
+/* 8. Container fit, alignment & vertical gap adjustments */
+.txn-qc-form .grid {
+  align-items: stretch !important;
+}
+
+.txn-qc-form .space-y-4 > :not([hidden]) ~ :not([hidden]) {
+  margin-top: 1.25rem !important;
+}
