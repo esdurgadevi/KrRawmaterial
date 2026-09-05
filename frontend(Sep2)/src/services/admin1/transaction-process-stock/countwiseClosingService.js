@@ -167,7 +167,7 @@
 
 import axios from "axios";
 
-const API_URL = "https://krexports.org/krerm/countwise-closing";
+const API_URL = "http://localhost:5000/api/countwise-closing";
 
 const api = axios.create({
   baseURL: API_URL,

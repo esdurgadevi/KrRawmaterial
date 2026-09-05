@@ -3,7 +3,7 @@ import axios from "axios";
 
 // ---------------- LOCATION TRANSFER API ----------------
 const LOCATION_TRANSFER_API_URL =
-  "https://krexports.org/krerm/location-transfer";
+  "http://localhost:5000/api/location-transfer";
 
 const locationTransferApi = axios.create({
   baseURL: LOCATION_TRANSFER_API_URL,

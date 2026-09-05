@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // ✅ Backend base URL
-const API_URL = "https://krexports.org/krerm/godowns";
+const API_URL = "http://localhost:5000/api/godowns";
 
 // ✅ Axios instance
 const api = axios.create({

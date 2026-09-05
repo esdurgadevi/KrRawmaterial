@@ -29,25 +29,25 @@ import wasteMasterRoutes from './routes/admin1/master/wasteMasterRoutes.js';
 import wasteRateRoutes from './routes/admin1/master/wasteRateRoutes.js';
 import wasteLotRoutes from './routes/admin1/master/wasteLotRoutes.js';
 import costMasterRoutes from './routes/admin1/master/costMasterRoutes.js';
-app.use("/krerm/auth", authRoutes);
-app.use("/krerm/stations", stationRoutes);
-app.use("/krerm/mixing-groups", mixingGroupRoutes);
-app.use("/krerm/mixings", mixingRoutes);
-app.use("/krerm/varieties", varietyRoutes);
-app.use("/krerm/states", stateRoutes);
-app.use("/krerm/brokers", brokerRoutes);
-app.use("/krerm/commodities", commodityRoutes);
-app.use("/krerm/transports", transportRoutes);
-app.use("/krerm/godowns", godownRoutes);
-app.use("/krerm/company-brokers", companyBrokerRoutes);
-app.use("/krerm/wc-invoices", wcInvoiceRoutes);
-app.use("/krerm/suppliers", supplierRoutes);
-app.use("/krerm/fibres", fibreRoutes);
-app.use("/krerm/packing-types", packingTypeRoutes);
-app.use("/krerm/waste-masters", wasteMasterRoutes);
-app.use("/krerm/waste-rates", wasteRateRoutes);
-app.use("/krerm/waste-lots", wasteLotRoutes);
-app.use("/krerm/cost-masters", costMasterRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/stations", stationRoutes);
+app.use("/api/mixing-groups", mixingGroupRoutes);
+app.use("/api/mixings", mixingRoutes);
+app.use("/api/varieties", varietyRoutes);
+app.use("/api/states", stateRoutes);
+app.use("/api/brokers", brokerRoutes);
+app.use("/api/commodities", commodityRoutes);
+app.use("/api/transports", transportRoutes);
+app.use("/api/godowns", godownRoutes);
+app.use("/api/company-brokers", companyBrokerRoutes);
+app.use("/api/wc-invoices", wcInvoiceRoutes);
+app.use("/api/suppliers", supplierRoutes);
+app.use("/api/fibres", fibreRoutes);
+app.use("/api/packing-types", packingTypeRoutes);
+app.use("/api/waste-masters", wasteMasterRoutes);
+app.use("/api/waste-rates", wasteRateRoutes);
+app.use("/api/waste-lots", wasteLotRoutes);
+app.use("/api/cost-masters", costMasterRoutes);
 
 
 
@@ -62,40 +62,40 @@ import lotAllowanceRoutes from "./routes/admin1/transaction-cotton/lotAllowanceR
 import lotRejectedRoutes from "./routes/admin1/transaction-cotton/lotRejectedRoutes.js";
 import finalInvoiceRoutes from "./routes/admin1/transaction-cotton/finalInvoiceRoutes.js";
 import cottonReportCatalogRoutes from "./routes/admin1/transaction-cotton/cottonReportCatalogRoutes.js";
-app.use("/krerm/purchase-orders", purchaseOrderRoutes);
-app.use("/krerm/inward-entries", inwardEntryRoutes);
-app.use("/krerm/inward-lots",inwardLotsRoutes);
-app.use("/krerm/issues",issueRoutes);
-app.use("/krerm/lot-entries",LotTestResultRoutes);
-app.use("/krerm/location-transfer",LocationTransferRoutes);
-app.use("/krerm/lot-allowances", lotAllowanceRoutes);
-app.use("/krerm/lot-rejecteds", lotRejectedRoutes);
-app.use("/krerm/final-invoices", finalInvoiceRoutes);
-app.get("/krerm/transaction-cotton/report-route-check", (req, res) => {
+app.use("/api/purchase-orders", purchaseOrderRoutes);
+app.use("/api/inward-entries", inwardEntryRoutes);
+app.use("/api/inward-lots",inwardLotsRoutes);
+app.use("/api/issues",issueRoutes);
+app.use("/api/lot-entries",LotTestResultRoutes);
+app.use("/api/location-transfer",LocationTransferRoutes);
+app.use("/api/lot-allowances", lotAllowanceRoutes);
+app.use("/api/lot-rejecteds", lotRejectedRoutes);
+app.use("/api/final-invoices", finalInvoiceRoutes);
+app.get("/api/transaction-cotton/report-route-check", (req, res) => {
   res.json({ ok: true, app: "transaction-cotton backend" });
 });
-app.use("/krerm/transaction-cotton/report-catalog", cottonReportCatalogRoutes);
+app.use("/api/transaction-cotton/report-catalog", cottonReportCatalogRoutes);
 
 //transaction-waste
 import salesOrderRoutes from "./routes/admin1/transaction-waste/salesOrderRoutes.js";
 import wastePackingRoutes from "./routes/admin1/transaction-waste/wastePackingRoutes.js"
 import invoiceRoutes from "./routes/admin1/transaction-waste/invoiceRoutes.js";
 import wasteEntryRoutes from "./routes/admin1/transaction-waste/wasteEntryRoutes.js";
-app.use("/krerm/waste-packings",wastePackingRoutes);
-app.use("/krerm/waste-sales",salesOrderRoutes);
-app.use("/krerm/invoices",invoiceRoutes);
-app.use("/krerm/waste-entries",wasteEntryRoutes);
+app.use("/api/waste-packings",wastePackingRoutes);
+app.use("/api/waste-sales",salesOrderRoutes);
+app.use("/api/invoices",invoiceRoutes);
+app.use("/api/waste-entries",wasteEntryRoutes);
 
 
 //transaction-process-stock
 import wasteIssueRoutes from "./routes/admin1/transaction-process-stock/wasteIssueRoute.js";
-app.use("/krerm/waste-issue", wasteIssueRoutes);
+app.use("/api/waste-issue", wasteIssueRoutes);
 import departmentKgRoutes from "./routes/admin1/transaction-process-stock/departmentKgRoutes.js";
-app.use("/krerm/department-kgs", departmentKgRoutes);
+app.use("/api/department-kgs", departmentKgRoutes);
 import countwiseClosingRoutes from "./routes/admin1/transaction-process-stock/countwiseClosingRoutes.js";
-app.use("/krerm/countwise-closing", countwiseClosingRoutes);
+app.use("/api/countwise-closing", countwiseClosingRoutes);
 import productRoute from "./routes/admin1/transaction-process-stock/productRoute.js";
-app.use("/krerm/products", productRoute);
+app.use("/api/products", productRoute);
 
 
 
@@ -113,19 +113,19 @@ import qcSimplexRoutes from "./routes/admin2/transaction-qc/qcSimplexRoutes.js";
 import qcCardingRoutes from "./routes/admin2/transaction-qc/qcCardingRoutes.js";
 import qcBlowRoomRoutes from "./routes/admin2/transaction-qc/qcBlowRoomRoutes.js";
 import qcReportCatalogRoutes from "./routes/admin2/transaction-qc/qcReportCatalogRoutes.js";
-app.use("/krerm/admin2/master/spinning-counts",spinningRoutes);
-app.use("/krerm/admin2/master/simplex-machines", simplexMachineRoutes);
-app.use("/krerm/admin2/transaction-qc/qc-entries", qcEntryRoutes);
-app.use("/krerm/admin2/transaction-qc/spinning-long-frame", spinningLongFrame);
-app.use("/krerm/admin2/transaction-qc/breaker-drawing",breakerDrawingRoutes);
-app.use("/krerm/admin2/transaction-qc/finisher-drawing",finisherDrawingRoutes);
-app.use("/krerm/admin2/transaction-qc/comber-entry",comberEntryRoutes);
-app.use("/krerm/admin2/transaction-qc/lap-former",lapFormerRoutes);
-app.use("/krerm/admin2/transaction-qc/auto-coner",autoConerRoutes);
-app.use("/krerm/admin2/transaction-qc/qc-simplex",qcSimplexRoutes);
-app.use("/krerm/admin2/transaction-qc/qc-carding",qcCardingRoutes);
-app.use("/krerm/admin2/transaction-qc/qc-blowroom",qcBlowRoomRoutes);
-app.use("/krerm/admin2/transaction-qc/qc-reports", qcReportCatalogRoutes);
+app.use("/api/admin2/master/spinning-counts",spinningRoutes);
+app.use("/api/admin2/master/simplex-machines", simplexMachineRoutes);
+app.use("/api/admin2/transaction-qc/qc-entries", qcEntryRoutes);
+app.use("/api/admin2/transaction-qc/spinning-long-frame", spinningLongFrame);
+app.use("/api/admin2/transaction-qc/breaker-drawing",breakerDrawingRoutes);
+app.use("/api/admin2/transaction-qc/finisher-drawing",finisherDrawingRoutes);
+app.use("/api/admin2/transaction-qc/comber-entry",comberEntryRoutes);
+app.use("/api/admin2/transaction-qc/lap-former",lapFormerRoutes);
+app.use("/api/admin2/transaction-qc/auto-coner",autoConerRoutes);
+app.use("/api/admin2/transaction-qc/qc-simplex",qcSimplexRoutes);
+app.use("/api/admin2/transaction-qc/qc-carding",qcCardingRoutes);
+app.use("/api/admin2/transaction-qc/qc-blowroom",qcBlowRoomRoutes);
+app.use("/api/admin2/transaction-qc/qc-reports", qcReportCatalogRoutes);
 
 
 export default app;

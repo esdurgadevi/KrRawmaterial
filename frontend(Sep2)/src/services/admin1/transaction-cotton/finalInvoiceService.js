@@ -4,7 +4,7 @@ import axios from "axios";
 
 // ================= FINAL INVOICE API =================
 const FINAL_INVOICE_API_URL =
-  "https://krexports.org/krerm/final-invoices";
+  "http://localhost:5000/api/final-invoices";
 
 // Axios instance
 const finalInvoiceApi = axios.create({

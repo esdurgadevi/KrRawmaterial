@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // ✅ Backend base URL (adjust port if your backend runs on different one, e.g. 3000)
-const API_URL = "https://krexports.org/krerm/waste-invoice-types";
+const API_URL = "http://localhost:5000/api/waste-invoice-types";
 
 // ✅ Axios instance
 const api = axios.create({

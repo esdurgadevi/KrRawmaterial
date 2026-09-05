@@ -252,7 +252,7 @@
 
 import axios from "axios";
 
-const API_URL = "https://krexports.org/krerm/waste-issue";
+const API_URL = "http://localhost:5000/api/waste-issue";
 
 const api = axios.create({
   baseURL: API_URL,

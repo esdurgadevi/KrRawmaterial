@@ -2,7 +2,7 @@
 import axios from "axios";
 
 // ---------------- LOT ENTRY API ----------------
-const LOT_ENTRY_API_URL = "https://krexports.org/krerm/lot-entries";
+const LOT_ENTRY_API_URL = "http://localhost:5000/api/lot-entries";
 
 // Axios instance
 const lotEntryApi = axios.create({

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "https://krexports.org/krerm/lot-rejecteds";
+const API_URL = "http://localhost:5000/api/lot-rejecteds";
 
 const api = axios.create({
   baseURL: API_URL,

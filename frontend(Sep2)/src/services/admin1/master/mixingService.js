@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // ✅ Backend base URL
-const API_URL = "https://krexports.org/krerm/mixings";
+const API_URL = "http://localhost:5000/api/mixings";
 
 // ✅ Axios instance
 const api = axios.create({

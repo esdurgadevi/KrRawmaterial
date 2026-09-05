@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({ 
-  baseURL: "https://krexports.org/krerm/transaction-cotton/report-catalog" 
+  baseURL: "http://localhost:5000/api/transaction-cotton/report-catalog" 
 });
 
 api.interceptors.request.use((config) => { 

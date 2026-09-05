@@ -3,7 +3,7 @@
 import axios from "axios";
 
 // ✅ Backend base URL (adjust if your API prefix is different)
-const API_URL = "https://krexports.org/krerm/waste-packings";
+const API_URL = "http://localhost:5000/api/waste-packings";
 
 // ✅ Axios instance with base config
 const api = axios.create({

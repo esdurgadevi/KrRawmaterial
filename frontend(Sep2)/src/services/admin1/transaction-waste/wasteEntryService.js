@@ -3,7 +3,7 @@
 import axios from "axios";
 
 // ✅ Backend base URL
-const API_URL = "https://krexports.org/krerm/waste-entries";
+const API_URL = "http://localhost:5000/api/waste-entries";
 
 // ✅ Axios instance
 const api = axios.create({

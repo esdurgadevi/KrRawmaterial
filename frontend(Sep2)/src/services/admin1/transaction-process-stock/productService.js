@@ -6,7 +6,7 @@ const productService = {
       const token = localStorage.getItem("token");
       console.log("📡 Calling API with token:", token ? "✅ Present" : "❌ Missing");
       
-      const response = await axios.get("https://krexports.org/krerm/products/external", {
+      const response = await axios.get("http://localhost:5000/api/products/external", {
         headers: {
           "Content-Type": "application/json",
           ...(token && { Authorization: `Bearer ${token}` }),
