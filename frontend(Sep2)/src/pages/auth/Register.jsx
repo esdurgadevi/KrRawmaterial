@@ -17,9 +17,9 @@ const Register = () => {
   const [passwordError, setPasswordError] = useState('');
 
   const roles = [
-    { value: 'admin', label: 'Administrator' },
-    { value: 'admin1', label: 'Administrator 2' },
-    { value: 'customer', label: 'Customer' }
+    { value: 'admin', label: 'Administrator 1 (Raw Material)' },
+    { value: 'admin1', label: 'Administrator 2 (QC)' },
+    { value: 'superadmin', label: 'Super Admin' },
   ];
 
   const handleChange = (e) => {

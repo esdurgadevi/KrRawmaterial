@@ -48,7 +48,7 @@ const IssueEntryManagement = () => {
     issueNumber: '',
     issueDate: new Date().toISOString().split('T')[0],
     mixingNo: '',
-    mixingGroupId: '',           
+    mixingGroupId: '',
     mixingGroupName: '',
     toMixingGroupId: '',
     toMixingGroupName: '',
@@ -130,41 +130,41 @@ const IssueEntryManagement = () => {
   // ✅ FIXED: Use synchronous cache + request deduplication
   const fetchMixingGroupName = async (id) => {
     if (!id) return '';
-    
+
     // ✅ Step 1: Check synchronous cache first (instant)
     if (mixingGroupCacheRef.current[id]) {
       return mixingGroupCacheRef.current[id];
     }
-    
+
     // ✅ Step 2: If request is already pending, wait for existing request
     if (pendingRequestsRef.current[id]) {
       return pendingRequestsRef.current[id];
     }
-    
+
     try {
       // ✅ Step 3: Create the promise and track it
       const promise = (async () => {
         const res = await mixingGroupService.getById(id);
         const name = res.mixingName || `Group ${id}`;
-        
+
         // Update synchronous cache immediately
         mixingGroupCacheRef.current[id] = name;
-        
+
         // Also update state for component display
         setMixingGroupNames(prev => ({ ...prev, [id]: name }));
-        
+
         return name;
       })();
-      
+
       // Mark request as pending
       pendingRequestsRef.current[id] = promise;
-      
+
       // Wait for result
       const result = await promise;
-      
+
       // Clean up pending request
       delete pendingRequestsRef.current[id];
-      
+
       return result;
     } catch {
       const fallback = `Group ${id}`;
@@ -243,7 +243,7 @@ const IssueEntryManagement = () => {
       setMixingGroups(groups);
 
       const names = {};
-      groups.forEach(g => { 
+      groups.forEach(g => {
         if (g.id) {
           const name = g.mixingName || `Group ${g.id}`;
           names[g.id] = name;
@@ -321,18 +321,18 @@ const IssueEntryManagement = () => {
       setError("Please select both start and end dates");
       return;
     }
-    
+
     setReportGenerating(true);
     setShowReportModal(false);
-    
+
     try {
       // Fetch report data
       const data = await issueService.getDailyIssueReport(reportDates.startDate, reportDates.endDate);
-      
+
       if (!data || data.length === 0) {
         throw new Error('No data found for the selected date range');
       }
-      
+
       // Process data
       const groupedByVariety = {};
       data.forEach(issue => {
@@ -341,7 +341,7 @@ const IssueEntryManagement = () => {
           const inwardLot = weightment?.inwardLot;
           const inwardEntry = inwardLot?.InwardEntry || inwardLot?.inwardEntry;
           const po = inwardEntry?.purchaseOrder;
-          
+
           const varietyName = po?.variety?.varietyName || 'OTHER';
           const lotNo = inwardLot?.lotNo || 'UNKNOWN';
           const partyName = po?.supplier?.supplierName || '';
@@ -372,7 +372,7 @@ const IssueEntryManagement = () => {
 
       // Open print window with report
       openPrintWindow(finalData, reportDates.startDate, reportDates.endDate);
-      
+
     } catch (err) {
       console.error('Report generation error:', err);
       setError(err.message || "Failed to generate report");
@@ -390,10 +390,10 @@ const IssueEntryManagement = () => {
     }
 
     const htmlContent = generateReportHTML(reportData, startDate, endDate);
-    
+
     printWindow.document.write(htmlContent);
     printWindow.document.close();
-    
+
     // Wait for content to load then trigger print
     printWindow.onload = () => {
       printWindow.print();
@@ -956,7 +956,7 @@ const IssueEntryManagement = () => {
             )}
           </div>
           <div className="flex gap-3">
-            <button 
+            <button
               onClick={() => setShowReportModal(true)}
               className="px-4 py-2 border rounded-lg hover:bg-gray-50 flex items-center gap-2"
             >
@@ -1190,7 +1190,7 @@ const IssueEntryManagement = () => {
                                     <td className="p-2 text-center">{selected ? '✔' : ''}</td>
                                     <td className="p-2">{bale.baleNo}</td>
                                     <td className="p-2">{formatNumber(bale.baleWeight)}</td>
-                                   </tr>
+                                  </tr>
                                 );
                               })}
                             </tbody>
@@ -1283,7 +1283,7 @@ const IssueEntryManagement = () => {
               <p><strong>From:</strong> {viewingIssue.mixingGroupName}</p>
               <p><strong>To:</strong> {viewingIssue.toMixingGroupName}</p>
               <p><strong>Total Bales:</strong> {viewingIssue.issueQty}</p>
-              
+
               {viewingIssue.issuedBales && viewingIssue.issuedBales.length > 0 && (
                 <div>
                   <h3 className="font-bold mb-2 mt-4 text-gray-800 border-b pb-2">Selected Bales</h3>
@@ -1323,7 +1323,7 @@ const IssueEntryManagement = () => {
               <h2 className="text-xl font-bold text-gray-800">Generate Daily Issue Report</h2>
               <button onClick={() => setShowReportModal(false)} className="text-gray-500 hover:text-gray-700 text-2xl">×</button>
             </div>
-            
+
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Start Date</label>

@@ -73,6 +73,7 @@ import QCCarding from "./pages/admin2/QCCarding.jsx";
 import QCBlowRoom from "./pages/admin2/QCBlowRoom.jsx";
 import QCReportsCatalog from "./pages/admin2/QCReportsCatalog.jsx";
 import NotFound from "./pages/NotFound.jsx";
+import SuperAdminLanding from "./pages/superadmin/SuperAdminLanding.jsx";
 
 
 const ProtectedRoute = ({ children, role }) => {
@@ -83,7 +84,18 @@ const ProtectedRoute = ({ children, role }) => {
     return <Navigate to="/login" replace />;
   }
 
-  if (role && user.role !== role.toLowerCase()) {
+  // superadmin can access any protected route without re-login
+  if (user.role === "superadmin") {
+    return children;
+  }
+
+  const allowedRoles = Array.isArray(role)
+    ? role.map((r) => r.toLowerCase())
+    : role
+    ? [role.toLowerCase()]
+    : [];
+
+  if (allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
     return <Navigate to="/login" replace />;
   }
 
@@ -179,6 +191,22 @@ const routes = [
             { path: "qc-reports", element: <QCReportsCatalog /> },
       { path: "*", element: <NotFound /> }
     ],
+  },
+  {
+    path: "/superadmin",
+    element: (
+      <ProtectedRoute role="superadmin">
+        <SuperAdminLanding />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/superadmin/landing",
+    element: (
+      <ProtectedRoute role="superadmin">
+        <SuperAdminLanding />
+      </ProtectedRoute>
+    ),
   },
 ];
 

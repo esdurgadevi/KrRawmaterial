@@ -15,7 +15,8 @@ export const createIssue = async (req, res) => {
 
 export const getAllIssues = async (req, res) => {
   try {
-    const issues = await issueService.getAll();
+    const { page, limit } = req.query;
+    const issues = await issueService.getAll(page, limit);
     res.status(200).json({
       message: "Issues retrieved successfully",
       issues,

@@ -95,15 +95,24 @@ export const create = async (data) => {
 };
 
 /* GET ALL */
-export const getAll = async () => {
+export const getAll = async (page = 1, limit = 50) => {
+  const offset = (page - 1) * limit;
+  
   return await Issue.findAll({
+    limit: parseInt(limit, 10),
+    offset: parseInt(offset, 10),
+    attributes: ["id", "issueNumber", "issueDate", "mixingNo", "mixingGroupId", "toMixingGroupId", "issueQty", "createdAt", "updatedAt"],
     include: [
       {
         model: IssueItem,
-        include: [InwardLotWeightment],
-      },
-      { model: MixingGroup, as: "mixingGroup" },
-      { model: MixingGroup, as: "toMixingGroup" },
+        attributes: ["weightmentId", "issueWeight"],
+        include: [
+          {
+            model: InwardLotWeightment,
+            attributes: ["lotNo", "baleNo", "baleWeight", "baleValue"],
+          }
+        ]
+      }
     ],
     order: [["id", "DESC"]],
   });

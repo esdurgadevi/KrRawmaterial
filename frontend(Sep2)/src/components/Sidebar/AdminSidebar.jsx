@@ -230,6 +230,12 @@ const AdminSidebar = () => {
   const [openSection, setOpenSection] = useState("");
   const navigate = useNavigate();
 
+  // Read logged-in user role
+  const userStr = localStorage.getItem("user");
+  const currentUser = userStr ? JSON.parse(userStr) : null;
+  const userRole = currentUser?.role || "";
+  const isSuperAdmin = userRole === "superadmin";
+
   /* ---------------- MENU GROUPS ---------------- */
 
   const dashboardItem = [
@@ -254,8 +260,8 @@ const AdminSidebar = () => {
     { to: "/admin/waste", icon: "🗑️", label: "Waste" },
     { to: "/admin/waste-rates", icon: "💰", label: "Waste Rate" },
     { to: "/admin/waste-lot", icon: "📦", label: "Waste Lot" },
-    { to: "/admin/cost-master", icon: "💰", label: "Cost Master" },
-    //{ to: "/admin/reports", icon: "📊", label: "Reports" },
+    // Cost Master: only for superadmin
+    ...(isSuperAdmin ? [{ to: "/admin/cost-master", icon: "💰", label: "Cost Master" }] : []),
   ];
 
   const cottonTransactionItems = [
@@ -287,7 +293,8 @@ const processStockTransactionItems = [
 const transactionReports = [
   { to: "/admin/cotton-reports", icon: "📊", label: "Cotton Reports" },
   { to: "/admin/waste-reports", icon: "📊", label: "Waste Cotton Reports" },
-  { to: "/admin/process-stock-reports", icon: "📊", label: "Process Stock Reports" },
+  // Process Stock Reports: only for superadmin
+  ...(isSuperAdmin ? [{ to: "/admin/process-stock-reports", icon: "📊", label: "Process Stock Reports" }] : []),
 ];
 
 
@@ -372,14 +379,16 @@ const transactionReports = [
             />
            
            
-            {/* Transaction Process Stock */}
-            <SidebarSection
-              title="Transaction - Process Stock"
-              open={openSection === "processStock"}
-              onClick={() => setOpenSection(openSection === "processStock" ? "" : "processStock")}
-              items={processStockTransactionItems}
-              setIsOpen={setIsOpen}
-            />
+            {/* Transaction Process Stock — superadmin only */}
+            {isSuperAdmin && (
+              <SidebarSection
+                title="Transaction - Process Stock"
+                open={openSection === "processStock"}
+                onClick={() => setOpenSection(openSection === "processStock" ? "" : "processStock")}
+                items={processStockTransactionItems}
+                setIsOpen={setIsOpen}
+              />
+            )}
 
             {/* Logout */}
             <li className="pt-4 mt-3 border-t border-[#1d1b31]">
