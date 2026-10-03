@@ -258,6 +258,7 @@ const InvoiceForm = React.memo(({
             onChange={handleFormChange}
             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 text-sm"
           >
+            <option value="">Select Invoice Type</option>
             {invoiceTypes.map((t) => (
               <option key={t.id} value={t.name}>{t.name}</option>
             ))}
@@ -349,8 +350,8 @@ const InvoiceForm = React.memo(({
         </div>
       </div>
 
-      {/* Row 5: Tax Values (CGST / SGST / IGST) */}
-      <div className="grid grid-cols-3 gap-4 mb-6 bg-yellow-50 border border-yellow-100 p-4 rounded-lg">
+      {/* Row 5: Tax Values (CGST / SGST / IGST / TCS) */}
+      <div className="grid grid-cols-4 gap-4 mb-6 bg-yellow-50 border border-yellow-100 p-4 rounded-lg">
         <div>
           <label className="block text-sm font-medium text-gray-700">CGST (%)</label>
           <input
@@ -382,6 +383,18 @@ const InvoiceForm = React.memo(({
             step="0.01"
             name="igst"
             value={formData.igst}
+            onChange={handleFormChange}
+            onWheel={(e) => e.target.blur()}
+            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 text-sm"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">TCS (%)</label>
+          <input
+            type="number"
+            step="0.01"
+            name="tcsPercent"
+            value={formData.tcsPercent}
             onChange={handleFormChange}
             onWheel={(e) => e.target.blur()}
             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 text-sm"
@@ -541,49 +554,56 @@ const InvoiceForm = React.memo(({
             <table className="min-w-full divide-y divide-gray-200 text-sm">
               <thead className="bg-gray-50">
                 <tr>
-                  {["Waste Name", "LOT No", "Bale No", "Gross Wt", "Tare Wt", "Net Wt", "Action"].map((h) => (
+                  {["Waste Name", "LOT No", "Bale No", "Gross Wt", "Tare Wt", "Net Wt", "Rate (₹)", "Amount", "Action"].map((h) => (
                     <th key={h} className="px-4 py-2 text-left text-xs font-medium text-gray-500">{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {formData.details.map((bale, index) => (
-                  <tr key={index}>
-                    <td className="px-4 py-2">{bale.wasteName}</td>
-                    <td className="px-4 py-2">{bale.lotNo}</td>
-                    <td className="px-4 py-2">{bale.baleNo}</td>
-                    <td className="px-4 py-2">
-                      <input
-                        type="number"
-                        value={bale.grossWt}
-                        step="0.001"
-                        onChange={(e) => handleDetailChange(index, "grossWt", e.target.value)}
-                        onWheel={(e) => e.target.blur()}
-                        className="w-20 px-2 py-1 border border-gray-300 rounded text-sm"
-                      />
-                    </td>
-                    <td className="px-4 py-2">
-                      <input
-                        type="number"
-                        value={bale.tareWt}
-                        step="0.001"
-                        onChange={(e) => handleDetailChange(index, "tareWt", e.target.value)}
-                        onWheel={(e) => e.target.blur()}
-                        className="w-20 px-2 py-1 border border-gray-300 rounded text-sm"
-                      />
-                    </td>
-                    <td className="px-4 py-2 font-medium">{formatNumber(bale.netWt, 3)}</td>
-                    <td className="px-4 py-2">
-                      <button
-                        type="button"
-                        onClick={() => removeBaleFromInvoice(index)}
-                        className="text-red-600 hover:text-red-800 text-xs font-medium"
-                      >
-                        Remove
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                {formData.details.map((bale, index) => {
+                  const orderDetail = selectedOrder?.details?.find(d => d.product === bale.wasteName);
+                  const currentRate = orderDetail && orderDetail.rate ? parseFloat(orderDetail.rate) : (parseFloat(ratePerKg) || 0);
+                  const currentAmount = (parseFloat(bale.netWt) || 0) * currentRate;
+                  return (
+                    <tr key={index}>
+                      <td className="px-4 py-2">{bale.wasteName}</td>
+                      <td className="px-4 py-2">{bale.lotNo}</td>
+                      <td className="px-4 py-2">{bale.baleNo}</td>
+                      <td className="px-4 py-2">
+                        <input
+                          type="number"
+                          value={bale.grossWt}
+                          step="0.001"
+                          onChange={(e) => handleDetailChange(index, "grossWt", e.target.value)}
+                          onWheel={(e) => e.target.blur()}
+                          className="w-20 px-2 py-1 border border-gray-300 rounded text-sm"
+                        />
+                      </td>
+                      <td className="px-4 py-2">
+                        <input
+                          type="number"
+                          value={bale.tareWt}
+                          step="0.001"
+                          onChange={(e) => handleDetailChange(index, "tareWt", e.target.value)}
+                          onWheel={(e) => e.target.blur()}
+                          className="w-20 px-2 py-1 border border-gray-300 rounded text-sm"
+                        />
+                      </td>
+                      <td className="px-4 py-2 font-medium">{formatNumber(bale.netWt, 3)}</td>
+                      <td className="px-4 py-2">{formatNumber(currentRate, 2)}</td>
+                      <td className="px-4 py-2 font-medium text-blue-700">{formatNumber(currentAmount, 2)}</td>
+                      <td className="px-4 py-2">
+                        <button
+                          type="button"
+                          onClick={() => removeBaleFromInvoice(index)}
+                          className="text-red-600 hover:text-red-800 text-xs font-medium"
+                        >
+                          Remove
+                        </button>
+                      </td>
+                    </tr>
+                  )
+                })}
               </tbody>
               <tfoot className="bg-gray-50 font-semibold text-sm">
                 <tr>
@@ -591,6 +611,7 @@ const InvoiceForm = React.memo(({
                   <td className="px-4 py-2">{formatNumber(totalGross, 3)}</td>
                   <td className="px-4 py-2">{formatNumber(totalTare, 3)}</td>
                   <td className="px-4 py-2">{formatNumber(totalNet, 3)}</td>
+                  <td colSpan="2" />
                   <td />
                 </tr>
               </tfoot>
@@ -680,7 +701,7 @@ const WasteCottonInvoicePage = () => {
   const emptyForm = () => ({
     invoiceNo: "",
     date: new Date().toISOString().split("T")[0],
-    invoiceType: "GST WASTE SALE INVOICE",
+    invoiceType: "",
     partyName: "",
     supplierId: "",
     address: "",
@@ -701,6 +722,7 @@ const WasteCottonInvoicePage = () => {
     hsCess: 0,
     tcs: 0,
     tcsRs: 0,
+    tcsPercent: 0,
     pfCharges: 0,
     subTotal: 0,
     roundOff: 0,
@@ -727,7 +749,7 @@ const WasteCottonInvoicePage = () => {
     if (selectedInvoiceType && formData.details.length > 0) {
       calculateInvoiceValues();
     }
-  }, [formData.details, ratePerKg, selectedInvoiceType]);
+  }, [formData.details, ratePerKg, selectedInvoiceType, selectedOrder, formData.cgst, formData.sgst, formData.igst, formData.tcsPercent]);
 
   // ── Fetchers ──────────────────────────────────────────────────────────────────
   const fetchInvoices = async () => {
@@ -758,11 +780,6 @@ const WasteCottonInvoicePage = () => {
     try {
       const data = await wcInvoiceTypeService.getAll();
       setInvoiceTypes(Array.isArray(data) ? data : []);
-      const def = data.find((t) => t.name === "GST WASTE SALE INVOICE");
-      if (def) {
-        setSelectedInvoiceType(def);
-        setFormData((prev) => ({ ...prev, invoiceType: def.name }));
-      }
     } catch {
       toast.error("Failed to load invoice types");
     }
@@ -786,10 +803,18 @@ const WasteCottonInvoicePage = () => {
       0
     );
 
+    const totalAssessValue = formData.details.reduce((sum, b) => {
+      const orderDetail = selectedOrder?.details?.find(d => d.product === b.wasteName);
+      const r = orderDetail && orderDetail.rate ? parseFloat(orderDetail.rate) : (parseFloat(ratePerKg) || 0);
+      return sum + ((parseFloat(b.netWt) || 0) * r);
+    }, 0);
+
+    const effectiveRatePerKg = totalKgs > 0 ? (totalAssessValue / totalKgs) : (parseFloat(ratePerKg) || 0);
+
     // First pass: Calculate Assess Value to use it for GST calculations
     const tempVariables = {
       totalKgs,
-      ratePerKg,
+      ratePerKg: effectiveRatePerKg,
       ratePer: 1,
       charityRs: 0,
       chessRs: 0,
@@ -814,14 +839,18 @@ const WasteCottonInvoicePage = () => {
     const igstAmount = parseFloat((assessValue * (igstRate / 100)).toFixed(2));
     const gstAmount = cgstAmount + sgstAmount; // Total GST (CGST + SGST)
 
+    // Calculate TCS Amount from TCS %
+    const tcsPercent = parseFloat(formData.tcsPercent) || 0;
+    const tcsAmount = parseFloat((assessValue * (tcsPercent / 100)).toFixed(2));
+
     // Second pass with calculated GST values
     const baseVariables = {
       totalKgs,
-      ratePerKg,
+      ratePerKg: effectiveRatePerKg,
       ratePer: 1,
       charityRs: 0,
       chessRs: 0,
-      tcsRs: 0,
+      tcsRs: tcsAmount,
       gstAmt: gstAmount,
       igstAmt: igstAmount,
     };
@@ -831,26 +860,39 @@ const WasteCottonInvoicePage = () => {
       baseVariables
     );
 
-    console.log('All Calculated Values:', calculated);
-    console.log('TCSRs:', calculated['TCSRs'] || calculated['TCSRS'] || 0);
-    console.log('TCS:', calculated['TCS'] || calculated['F'] || 0);
+    const charity = calculated["Charity"] || calculated["A"] || 0;
+    const vatTax = calculated["Tax [VAT]"] || calculated["B"] || 0;
+    const duty = calculated["Duty"] || calculated["C"] || 0;
+    const cess = calculated["Chess"] || calculated["D"] || 0;
+    const hsCess = calculated["H.S.Cess"] || calculated["E"] || 0;
+    const pfCharges = calculated["Others"] || calculated["G"] || 0;
+    const cenvat = calculated["Cenvat"] || calculated["J"] || 0;
+
+    // Sub Total = Assessable Value + TCS Amount + other tax amount
+    const subTotal = assessValue + tcsAmount + charity + vatTax + duty + cess + hsCess + pfCharges + cenvat;
+
+    // Invoice Value = Sub Total + GST (all added value)
+    const totalGst = gstAmount + igstAmount;
+    const invoiceValue = Math.round(subTotal + totalGst);
 
     setFormData((prev) => ({
       ...prev,
-      assessableValue: calculated["Assess Value"] || calculated["X"] || 0,
-      charity: calculated["Charity"] || calculated["A"] || 0,
-      vatTax: calculated["Tax [VAT]"] || calculated["B"] || 0,
-      duty: calculated["Duty"] || calculated["C"] || 0,
-      cess: calculated["Chess"] || calculated["D"] || 0,
-      hsCess: calculated["H.S.Cess"] || calculated["E"] || 0,
-      tcs: calculated["TCS"] || calculated["F"] || 0,
-      tcsRs: calculated["TCSRs"] || calculated["TCSRS"] || calculated["F"] || 0,
-      pfCharges: calculated["Others"] || calculated["G"] || 0,
+      assessableValue: assessValue,
+      charity,
+      vatTax,
+      duty,
+      cess,
+      hsCess,
+      tcs: tcsAmount,
+      tcsRs: tcsAmount,
+      pfCharges,
       cgstAmt: cgstAmount,
       sgstAmt: sgstAmount,
-      subTotal: calculated["Sub Total"] || calculated["H"] || 0,
-      cenvat: calculated["Cenvat"] || calculated["J"] || 0,
-      invoiceValue: calculated["Total Value"] || calculated["I"] || 0,
+      igstAmt: igstAmount,
+      gst: gstAmount,
+      subTotal: parseFloat(subTotal.toFixed(2)),
+      cenvat,
+      invoiceValue: parseFloat(invoiceValue.toFixed(2)),
     }));
   };
 
@@ -1118,6 +1160,7 @@ const WasteCottonInvoicePage = () => {
       hsCess: invoice.hsCess || 0,
       tcs: invoice.tcs || 0,
       tcsRs: invoice.tcsRs || 0,
+      tcsPercent: invoice.tcsPercent ?? (invoice.assessableValue > 0 ? ((invoice.tcsRs || 0) / invoice.assessableValue) * 100 : 0),
       pfCharges: invoice.pfCharges || 0,
       subTotal: invoice.subTotal || 0,
       roundOff: invoice.roundOff || 0,
@@ -1162,11 +1205,10 @@ const WasteCottonInvoicePage = () => {
     setAvailableBales([]);
     setCheckedBales(new Set());
     setRatePerKg(null);
-    const def = invoiceTypes.find((t) => t.name === "GST WASTE SALE INVOICE");
-    setSelectedInvoiceType(def || null);
+    setSelectedInvoiceType(null);
     // fetch next invoice no into the cleared form
     loadNextInvoiceNo();
-  }, [invoiceTypes, loadNextInvoiceNo]);
+  }, [loadNextInvoiceNo]);
 
   const handleImportExcel = async (e) => {
     const file = e.target.files[0];
@@ -1384,11 +1426,10 @@ const WasteCottonInvoicePage = () => {
                     <td className="px-3 py-2.5 whitespace-nowrap font-semibold text-gray-900">{inv.details?.length || 0}</td>
                     <td className="px-3 py-2.5 whitespace-nowrap font-semibold text-blue-600">₹{formatNumber(inv.invoiceValue)}</td>
                     <td className="px-3 py-2.5 whitespace-nowrap">
-                      <span className={`px-2 py-0.5 text-[11px] font-semibold rounded-full ${
-                        inv.approve
-                          ? "bg-green-100 text-green-800"
-                          : "bg-yellow-100 text-yellow-800"
-                      }`}>
+                      <span className={`px-2 py-0.5 text-[11px] font-semibold rounded-full ${inv.approve
+                        ? "bg-green-100 text-green-800"
+                        : "bg-yellow-100 text-yellow-800"
+                        }`}>
                         {inv.approve ? "Approved" : "Pending"}
                       </span>
                     </td>
@@ -1472,14 +1513,13 @@ const WasteCottonInvoicePage = () => {
                   p === '...'
                     ? <span key={`ellipsis-${idx}`} className="px-2 py-1 text-xs text-gray-400">…</span>
                     : <button
-                        key={p}
-                        onClick={() => setCurrentPage(p)}
-                        className={`px-2.5 py-1 text-xs rounded border ${
-                          currentPage === p
-                            ? 'bg-blue-600 text-white border-blue-600'
-                            : 'border-gray-300 hover:bg-gray-100 text-gray-700'
+                      key={p}
+                      onClick={() => setCurrentPage(p)}
+                      className={`px-2.5 py-1 text-xs rounded border ${currentPage === p
+                        ? 'bg-blue-600 text-white border-blue-600'
+                        : 'border-gray-300 hover:bg-gray-100 text-gray-700'
                         }`}
-                      >{p}</button>
+                    >{p}</button>
                 )
               }
               <button
