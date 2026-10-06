@@ -15,11 +15,15 @@ export const createIssue = async (req, res) => {
 
 export const getAllIssues = async (req, res) => {
   try {
-    const { page, limit } = req.query;
-    const issues = await issueService.getAll(page, limit);
+    const { page, limit, search } = req.query;
+    const result = await issueService.getAll(page, limit, search);
     res.status(200).json({
       message: "Issues retrieved successfully",
-      issues,
+      issues: result.issues || result,
+      totalItems: result.totalItems,
+      totalPages: result.totalPages,
+      currentPage: result.currentPage,
+      pageSize: result.pageSize,
     });
   } catch (error) {
     res.status(400).json({ message: error.message });

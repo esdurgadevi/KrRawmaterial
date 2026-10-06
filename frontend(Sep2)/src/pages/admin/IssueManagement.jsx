@@ -32,6 +32,12 @@ const IssueEntryManagement = () => {
   const [success, setSuccess] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
 
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [totalItems, setTotalItems] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
+
   // Modal control
   const [showModal, setShowModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
@@ -174,16 +180,24 @@ const IssueEntryManagement = () => {
     }
   };
 
-  const fetchIssues = async () => {
+  const fetchIssues = async (page = currentPage, limit = pageSize, search = searchTerm) => {
     setLoading(true);
     try {
-      const response = await issueService.getAll();
+      const response = await issueService.getAll(page, limit, search);
       const issuesData = Array.isArray(response) ? response : (response.issues || []);
+
+      const total = response.totalItems !== undefined ? response.totalItems : issuesData.length;
+      const pages = response.totalPages !== undefined ? response.totalPages : 1;
+      const current = response.currentPage !== undefined ? response.currentPage : page;
+
+      setTotalItems(total);
+      setTotalPages(pages);
+      setCurrentPage(current);
 
       const processed = await Promise.all(issuesData.map(async (issue) => {
         const [fromName, toName] = await Promise.all([
           fetchMixingGroupName(issue.mixingGroupId),
-          fetchMixingGroupName(issue.toMixingGroupId)
+          fetchMixingGroupName(issue.toMixingGroupName)
         ]);
 
         return {
@@ -216,6 +230,27 @@ const IssueEntryManagement = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchIssues(1, pageSize, searchTerm);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+      fetchIssues(newPage, pageSize, searchTerm);
+    }
+  };
+
+  const handlePageSizeChange = (e) => {
+    const newSize = Number(e.target.value);
+    setPageSize(newSize);
+    setCurrentPage(1);
+    fetchIssues(1, newSize, searchTerm);
   };
 
   // const fetchMixingGroups = async () => {
@@ -262,7 +297,7 @@ const IssueEntryManagement = () => {
   const fetchAvailableLots = async () => {
     setLotsLoading(true);
     try {
-      const res = await inwardLotService.getAll();
+      const res = await inwardLotService.getAvailable();
       setAvailableLots(Array.isArray(res) ? res : []);
     } catch {
       setAvailableLots([]);
@@ -1024,6 +1059,69 @@ const IssueEntryManagement = () => {
         )}
       </div>
 
+      {/* Pagination Controls */}
+      {!loading && totalItems > 0 && (
+        <div className="bg-white rounded-lg shadow px-6 py-4 mt-4 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-4 text-sm text-gray-600">
+            <span>
+              Showing <span className="font-semibold text-gray-800">{((currentPage - 1) * pageSize) + 1}</span> to{' '}
+              <span className="font-semibold text-gray-800">{Math.min(currentPage * pageSize, totalItems)}</span> of{' '}
+              <span className="font-semibold text-gray-800">{totalItems}</span> entries
+            </span>
+            <div className="flex items-center gap-2">
+              <label htmlFor="pageSizeSelect" className="text-gray-600">Per page:</label>
+              <select
+                id="pageSizeSelect"
+                value={pageSize}
+                onChange={handlePageSizeChange}
+                className="border rounded px-2 py-1 text-sm bg-white focus:ring-2 focus:ring-blue-400 outline-none"
+              >
+                <option value={10}>10</option>
+                <option value={25}>25</option>
+                <option value={50}>50</option>
+                <option value={100}>100</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-1">
+            <button
+              onClick={() => handlePageChange(1)}
+              disabled={currentPage === 1}
+              className="px-3 py-1.5 border rounded-lg text-sm text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              « First
+            </button>
+            <button
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="px-3 py-1.5 border rounded-lg text-sm text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              ‹ Prev
+            </button>
+
+            <span className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg">
+              Page {currentPage} of {totalPages}
+            </span>
+
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="px-3 py-1.5 border rounded-lg text-sm text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              Next ›
+            </button>
+            <button
+              onClick={() => handlePageChange(totalPages)}
+              disabled={currentPage === totalPages}
+              className="px-3 py-1.5 border rounded-lg text-sm text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              Last »
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* ──────────────── MODAL ──────────────── */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -1097,7 +1195,7 @@ const IssueEntryManagement = () => {
                                 onClick={() => handleLotSelect(lot)}
                                 className={`p-3 cursor-pointer hover:bg-blue-50 ${formData.lotNo === lot.lotNo ? 'bg-blue-100' : ''}`}
                               >
-                                {lot.lotNo} ({lot.qty} bales)
+                                {lot.lotNo} ({lot.availableCount !== undefined ? lot.availableCount : lot.qty} bales)
                               </div>
                             ))}
                           </div>

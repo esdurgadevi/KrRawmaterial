@@ -106,6 +106,11 @@ export const getAllInwardLots = async () => {
     ],
     include: [
       {
+        model: InwardLotWeightment,
+        as: "weightments",
+        attributes: ["id", "isIssued"],
+      },
+      {
         model: InwardEntry,
         as: "InwardEntry",
         attributes: ["inwardNo"],
@@ -135,12 +140,19 @@ export const getAllInwardLots = async () => {
 
   return lots.map((lot) => {
     const data = lot.toJSON();
+    const weightments = data.weightments || [];
+    const availableCount =
+      weightments.length > 0
+        ? weightments.filter((w) => !w.isIssued).length
+        : data.qty;
 
     return {
       id: data.id,
       lotNo: data.lotNo,
       lotDate: data.lotDate,
       qty: data.qty,
+      availableCount, // Actual remaining unissued bales count
+
       freight: data.freight,
       nettWeight: data.nettWeight,
       candyRate: data.candyRate,
@@ -159,6 +171,16 @@ export const getAllInwardLots = async () => {
     };
   });
 };
+
+/* =========================
+   GET AVAILABLE LOTS (for Issue dropdown)
+   Only lots with availableCount > 0
+========================= */
+export const getAvailableInwardLots = async () => {
+  const allLots = await getAllInwardLots();
+  return allLots.filter((lot) => lot.availableCount > 0);
+};
+
 /* =========================
    GET ALL (LIST PAGE)
 ========================= */

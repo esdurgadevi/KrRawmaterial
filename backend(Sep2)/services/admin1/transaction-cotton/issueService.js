@@ -95,13 +95,68 @@ export const create = async (data) => {
 };
 
 /* GET ALL */
-export const getAll = async (page = 1, limit = 50) => {
-  const offset = (page - 1) * limit;
-  
-  return await Issue.findAll({
-    limit: parseInt(limit, 10),
-    offset: parseInt(offset, 10),
-    attributes: ["id", "issueNumber", "issueDate", "mixingNo", "mixingGroupId", "toMixingGroupId", "issueQty", "createdAt", "updatedAt"],
+export const getAll = async (page = 1, limit = 10, search = "") => {
+  const pageNum = parseInt(page, 10) || 1;
+  const limitNum = parseInt(limit, 10) || 10;
+  const offset = (pageNum - 1) * limitNum;
+
+  const whereClause = {};
+
+  if (search && search.trim()) {
+    const q = `%${search.trim()}%`;
+
+    // 1️⃣ Find weightment IDs matching lotNo or baleNo
+    const matchingWeightments = await InwardLotWeightment.findAll({
+      where: {
+        [Op.or]: [
+          { lotNo: { [Op.like]: q } },
+          { baleNo: { [Op.like]: q } },
+        ],
+      },
+      attributes: ["id"],
+      raw: true,
+    });
+
+    const weightmentIds = matchingWeightments.map((w) => w.id);
+    let matchingIssueIds = [];
+
+    if (weightmentIds.length > 0) {
+      const matchingItems = await IssueItem.findAll({
+        where: { weightmentId: { [Op.in]: weightmentIds } },
+        attributes: ["issueId"],
+        raw: true,
+      });
+      matchingIssueIds = matchingItems.map((i) => i.issueId);
+    }
+
+    const orConditions = [
+      { issueNumber: { [Op.like]: q } },
+      { mixingNo: { [Op.like]: q } },
+    ];
+
+    if (matchingIssueIds.length > 0) {
+      orConditions.push({ id: { [Op.in]: matchingIssueIds } });
+    }
+
+    whereClause[Op.or] = orConditions;
+  }
+
+  const { count, rows } = await Issue.findAndCountAll({
+    where: whereClause,
+    limit: limitNum,
+    offset: offset,
+    distinct: true,
+    attributes: [
+      "id",
+      "issueNumber",
+      "issueDate",
+      "mixingNo",
+      "mixingGroupId",
+      "toMixingGroupId",
+      "issueQty",
+      "createdAt",
+      "updatedAt",
+    ],
     include: [
       {
         model: IssueItem,
@@ -110,12 +165,20 @@ export const getAll = async (page = 1, limit = 50) => {
           {
             model: InwardLotWeightment,
             attributes: ["lotNo", "baleNo", "baleWeight", "baleValue"],
-          }
-        ]
-      }
+          },
+        ],
+      },
     ],
     order: [["id", "DESC"]],
   });
+
+  return {
+    issues: rows,
+    totalItems: count,
+    totalPages: Math.ceil(count / limitNum) || 1,
+    currentPage: pageNum,
+    pageSize: limitNum,
+  };
 };
 
 /* GET BY ID */

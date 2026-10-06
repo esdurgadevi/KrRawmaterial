@@ -34,10 +34,13 @@ const issueService = {
   },
 
   // 📄 Get All Issues
-  getAll: async () => {
-    const response = await api.get("/");
-    console.log(response);
-    return response.data.issues;
+  getAll: async (page = 1, limit = 10, search = "") => {
+    const params = {};
+    if (page) params.page = page;
+    if (limit) params.limit = limit;
+    if (search) params.search = search;
+    const response = await api.get("/", { params });
+    return response.data;
   },
 
   // 🔍 Get Issue By ID

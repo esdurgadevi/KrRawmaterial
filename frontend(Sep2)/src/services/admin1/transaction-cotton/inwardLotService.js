@@ -41,7 +41,7 @@ const inwardLotService = {
         quintalRate: Number(lotHeader.quintalRate) || 0,
         ratePerKg: Number(lotHeader.ratePerKg) || 0,
         assessValue: Number(lotHeader.assessValue) || 0,
-        godownId : Number(lotHeader.godownId) || 0, 
+        godownId: Number(lotHeader.godownId) || 0,
       },
       weightments: weightments.map((w) => ({
         baleNo: w.baleNo,
@@ -65,6 +65,15 @@ const inwardLotService = {
     const res = await api.get("/");
     return res.data;
   },
+
+  /* =============================
+     GET AVAILABLE LOTS (remaining bales only)
+  ============================= */
+  getAvailable: async () => {
+    const res = await api.get("/available");
+    return res.data;
+  },
+
 
   /* =============================
      GET LOT BY ID

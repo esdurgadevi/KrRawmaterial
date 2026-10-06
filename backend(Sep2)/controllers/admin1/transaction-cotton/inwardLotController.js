@@ -33,6 +33,16 @@ export const getAllLots = async (req, res) => {
   }
 };
 
+export const getAvailableLots = async (req, res) => {
+  try {
+    const lots = await service.getAvailableInwardLots();
+    res.json(lots);
+  } catch (e) {
+    res.status(400).json({ message: e.message });
+  }
+};
+
+
 export const getLot = async (req, res) => {
   try {
     const lot = await service.getInwardLotById(req.params.lotNo);
